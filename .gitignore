@@ -1,0 +1,3 @@
+node_modules
+rabbitMq.config.js
+s3.config.js
