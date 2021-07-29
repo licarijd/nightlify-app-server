@@ -13,8 +13,10 @@ app.use(cors())
 app.post('/upload', async (req, res) => {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
+            console.log(err)
             return res.status(500).json(err)
         } else if (err) {
+            console.log(err)
             return res.status(500).json(err)
         }
    return res.status(200).send(req.file)
