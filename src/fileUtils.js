@@ -3,10 +3,13 @@ import multer from 'multer'
 import multerS3 from 'multer-s3'
 import S3 from 'aws-sdk/clients/s3'
 import { ACCESS_KEY_ID, SECRET_ACCESS_KEY } from '../awsAccessKeys.config'
+import { DEV_S3_BUCKET_NAME } from './constants'
 
+const IMAGE_FILENAME = 'file'
+const S3_REGION = 'ca-central-1'
 const s3 = new S3({
-    bucketName: 'original-uploaded-images-dev',
-    region: 'ca-central-1',
+    bucketName: DEV_S3_BUCKET_NAME,
+    region: S3_REGION,
     accessKeyId: ACCESS_KEY_ID,
     secretAccessKey: SECRET_ACCESS_KEY
 })
@@ -14,24 +17,12 @@ const s3 = new S3({
 export const upload = multer({
     storage: multerS3({
         s3,
-        bucket: 'original-uploaded-images-dev',
-        metadata: function (req, file, cb) {
+        bucket: DEV_S3_BUCKET_NAME,
+        metadata: function (_, file, cb) {
             cb(null, {fieldName: file.fieldname});
         },
-        key: function (req, file, cb) {
-            cb(null, Date.now().toString())
+        key: function (_, file, cb) {
+            cb(null, file.originalname)
         }
     })
-}).single('file')
-
-// Saves images into the /public directory
-/*const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-    cb(null, 'public')
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' +file.originalname )
-  }
-})
-
-export const upload = multer({ storage }).single('file')*/
+}).single(IMAGE_FILENAME)

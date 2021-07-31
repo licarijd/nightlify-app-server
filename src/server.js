@@ -1,36 +1,36 @@
 import express from 'express'
 import { addJobToQueue } from './send'
-import { uploadToS3 } from './upload'
 import cors from 'cors'
-import multer from 'multer'
 import { upload } from './fileUtils'
+import { DEV_S3_BUCKET_NAME } from './constants'
 
 const app = express()
 const port = 8081
 
 app.use(cors())
+app.use(express.urlencoded());
+app.use(express.json());
 
 app.post('/upload', async (req, res) => {
-    upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            console.log(err)
-            return res.status(500).json(err)
-        } else if (err) {
-            console.log(err)
+    upload(req, res, (err) => {
+        if (err) {
             return res.status(500).json(err)
         }
-   return res.status(200).send(req.file)
-
- })
-    //console.log(req.file)
-    /*const { user, fileName } = req.body
-    const file = files[fileName]
-    const s3Response = await uploadToS3(user, file)
-    const { bucket, key, location } = s3Response
-
-    addJobToQueue(bucket, key, location, res)*/
-    //return res.status(200).send(req.file)
-  })
+        
+        try { 
+            addJobToQueue(DEV_S3_BUCKET_NAME, req.file.originalname, res)
+                .then(() => {
+                    return res.status(200).send(req.file)
+                }).catch(err => {
+                    console.log(err)
+                    return res.status(500).json(err)
+                })
+            
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+    })
+})
  
 app.get('/', (req, res) => {
     res.send('Hello World')
