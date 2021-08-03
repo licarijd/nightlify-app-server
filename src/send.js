@@ -24,7 +24,7 @@ export const config = {
         ssl_verify: true
     }
 }
-const RABBITMQ_QUEUE = 'image-conversion-job-broker'
+const RABBITMQ_QUEUE = 'image-conversion-job-broker-1'
 const client = new RabbitMQClient(config)
 
 export const addJobToQueue = async (bucket, key, _) => {
