@@ -14,11 +14,12 @@ app.use(express.json());
 app.post('/upload', async (req, res) => {
     upload(req, res, (err) => {
         if (err) {
+            console.error(err)
             return res.status(500).json(err)
         }
         
         try { 
-            addJobToQueue(DEV_S3_BUCKET_NAME, req.file.originalname, res)
+            addJobToQueue(DEV_S3_BUCKET_NAME, req.body.data, req.file.originalname, res)
                 .then(() => {
                     return res.status(200).send(req.file)
                 }).catch(err => {
@@ -27,6 +28,7 @@ app.post('/upload', async (req, res) => {
                 })
             
         } catch (err) {
+            console.error(err)
             return res.status(500).json(err)
         }
     })
