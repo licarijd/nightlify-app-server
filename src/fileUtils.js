@@ -2,7 +2,7 @@
 import multer from 'multer'
 import multerS3 from 'multer-s3'
 import S3 from 'aws-sdk/clients/s3'
-import { ACCESS_KEY_ID, SECRET_ACCESS_KEY } from '../awsAccessKeys.config'
+import { ACCESS_KEY_ID, SECRET_ACCESS_KEY } from './awsAccessKeys.config'
 import { DEV_S3_BUCKET_NAME } from './constants'
 
 const IMAGE_FILENAME = 'file'
