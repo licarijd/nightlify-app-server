@@ -2,10 +2,11 @@ import express from 'express'
 import { addJobToQueue } from './send'
 import cors from 'cors'
 import { upload } from './fileUtils'
-import { DEV_S3_BUCKET_NAME } from './constants'
+import { DEV_S3_BUCKET_NAME, PROD_S3_BUCKET_NAME } from './constants'
 
 const app = express()
 const port = 8081
+const bucketName = process.env.NODE_ENV == 'production' ? PROD_S3_BUCKET_NAME : DEV_S3_BUCKET_NAME
 
 app.use(cors())
 app.use(express.urlencoded());
@@ -21,7 +22,7 @@ app.post('/upload', async (req, res) => {
         const { email, watermark } = req.body
         
         try { 
-            addJobToQueue(DEV_S3_BUCKET_NAME, email, watermark, req.file.originalname, res)
+            addJobToQueue(bucketName, email, watermark, req.file.originalname, res)
                 .then(() => {
                     return res.status(200).send(req.file)
                 }).catch(err => {
