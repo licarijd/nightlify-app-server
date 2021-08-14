@@ -28,7 +28,7 @@ export const config = {
 const RABBITMQ_QUEUE = 'image-conversion-job-broker-1'
 const client = new RabbitMQClient(config)
 
-export const addJobToQueue = async (bucket, email, key, _) => {
-    const data = { bucket, email, key }
+export const addJobToQueue = async (bucket, email, watermark = '', key, _) => {
+    const data = { bucket, email, key, watermark }
     return await client.publish({ queue: { name: RABBITMQ_QUEUE } }, data)
 }
